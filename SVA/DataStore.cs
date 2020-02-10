@@ -92,9 +92,10 @@ namespace SVA
             CityArray = data[0].Split('\t');
             StreetArray = data[1].Split('\t');
 
+
             var records = new List<AddressRecord> { };
 
-            data.Skip(2).Take(10000).ToList().ForEach(p =>
+            data.Skip(2).ToList().ForEach(p =>
             {
                 var items = p.Split('\t');
 
@@ -160,7 +161,13 @@ namespace SVA
                 matches = matches.Where(p => p.first_name.StartsWith(name) || p.last_name.StartsWith(name));
 
             if (!String.IsNullOrEmpty(street))
-                matches = matches.Where(p => p.street_address.StartsWith(street));
+                foreach (var street_item in street.Split(' '))
+                {
+                    if (Char.IsDigit(street_item[0]))
+                        matches = matches.Where(p => p.street_address.StartsWith(street_item));
+                    else
+                        matches = matches.Where(p => StreetArray[p.streetname_id-1].Contains(street_item));
+                }
 
             return FormatRecords(matches.ToList());
         }

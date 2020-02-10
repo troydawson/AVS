@@ -36,6 +36,17 @@ namespace SVA
     {
         DataSource? TableDataSource { get; set; }
 
+        void UpdateTable()
+        {
+            if (TableDataSource == null)
+                return;
+
+            TableDataSource.TableItems = DataStore.Match(name: NameEntry.Text.Trim(), street: StreetEntry.Text.Trim());
+
+            MainTableView.ReloadData();
+        }
+
+
         public ViewController(IntPtr handle) : base(handle)
         {
         }
@@ -51,6 +62,13 @@ namespace SVA
             MainTableView.Source = TableDataSource = new DataSource(DataStore.Match(name: "", street: ""));
         }
 
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+
+            NameEntry.BecomeFirstResponder();
+        }
+
         public override void DidReceiveMemoryWarning()
         {
             base.DidReceiveMemoryWarning();
@@ -58,18 +76,17 @@ namespace SVA
 
         partial void ResetButton_TouchUpInside(UIButton sender)
         {
-            msg("[i] -- Reset!");
+            NameEntry.Text = StreetEntry.Text = @"";
+
+            NameEntry.BecomeFirstResponder();
+
+            UpdateTable();
         }
 
         [Action("searchBar:textDidChange:")]
-        public void SearchBar_TextDidCHange(UISearchBar sender, string text)
+        public void SearchBar_TextDidChange(UISearchBar sender, string text)
         {
-            if (TableDataSource == null)
-                return;
-
-            TableDataSource.TableItems = DataStore.Match(name: NameEntry.Text.Trim(), street: StreetEntry.Text.Trim());
-
-            MainTableView.ReloadData();
+            UpdateTable();
         }
     }
 }
