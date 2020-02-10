@@ -8,7 +8,7 @@ namespace SVA
 {
     public class DataSource : UITableViewSource
     {
-        string[] TableItems;
+        public string[] TableItems { get; set; }
         string CellIdentifier = "TableCell";
 
         public DataSource(string[] items)
@@ -32,8 +32,10 @@ namespace SVA
         }
     }
 
-    public partial class ViewController : UIViewController
+    public partial class ViewController : UIViewController, IUISearchBarDelegate
     {
+        DataSource? TableDataSource { get; set; }
+
         public ViewController(IntPtr handle) : base(handle)
         {
         }
@@ -42,8 +44,11 @@ namespace SVA
         {
             base.ViewDidLoad();
 
+            NameEntry.WeakDelegate = this;
+            StreetEntry.WeakDelegate = this;
 
-            MainTableView.Source = new DataSource(DataStore.Match(name: "", street: ""));
+
+            MainTableView.Source = TableDataSource = new DataSource(DataStore.Match(name: "", street: ""));
         }
 
         public override void DidReceiveMemoryWarning()
@@ -54,6 +59,17 @@ namespace SVA
         partial void ResetButton_TouchUpInside(UIButton sender)
         {
             msg("[i] -- Reset!");
+        }
+
+        [Action("searchBar:textDidChange:")]
+        public void SearchBar_TextDidCHange(UISearchBar sender, string text)
+        {
+            if (TableDataSource == null)
+                return;
+
+            TableDataSource.TableItems = DataStore.Match(name: NameEntry.Text.Trim(), street: StreetEntry.Text.Trim());
+
+            MainTableView.ReloadData();
         }
     }
 }

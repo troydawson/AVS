@@ -20,11 +20,19 @@ namespace SVA
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UISearchBar NameEntry { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UIButton ResetButton { get; set; }
 
-        [Action("ResetButton_TouchUpInside:")]
+        [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        partial void ResetButton_TouchUpInside(UIKit.UIButton sender);
+        UIKit.UISearchBar StreetEntry { get; set; }
+
+        [Action ("ResetButton_TouchUpInside:")]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        partial void ResetButton_TouchUpInside (UIKit.UIButton sender);
 
         void ReleaseDesignerOutlets ()
         {
@@ -33,9 +41,19 @@ namespace SVA
                 MainTableView = null;
             }
 
+            if (NameEntry != null) {
+                NameEntry.Dispose ();
+                NameEntry = null;
+            }
+
             if (ResetButton != null) {
                 ResetButton.Dispose ();
                 ResetButton = null;
+            }
+
+            if (StreetEntry != null) {
+                StreetEntry.Dispose ();
+                StreetEntry = null;
             }
         }
     }
